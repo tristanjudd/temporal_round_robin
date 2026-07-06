@@ -1,0 +1,47 @@
+# Byte-compiled / cached
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Test / coverage tooling
+.pytest_cache/
+.cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+
+# Type checker / linter caches
+.mypy_cache/
+.pyre/
+.pytype/
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Editors / IDEs
+.vscode/
+.idea/
+*.swp
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Downloaded real-world dataset (see real_data_profiles.py /
+# perpetual/README.md) - not checked into version control.
+/data/
+data.zip
