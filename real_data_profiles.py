@@ -74,8 +74,8 @@ def load_real_data_profiles(
     """
     file_dir, files = get_file_names(dir_name)
 
-    profile_history = []
-    all_voters = set()
+    profile_history: List[ApprovalProfile] = []
+    all_voters: Set[Any] = set()
     if file_dir is not None:
         # sorts from oldest to newest if name is sortable by date
         # (YYYYMMDD)
@@ -119,7 +119,7 @@ def load_file(
                 print("ranking Data seems to have wrong format in "
                       "file", abs_path)
                 raise Exception(f"Unknown format: {line}")
-            local_ranking = []
+            local_ranking: List[int] = []
             profile[parts[0]] = local_ranking  # name of the voter
             if with_weights:
                 get_ranking_with_weights(parts[1], local_ranking,
@@ -202,7 +202,7 @@ def add_candidate(rank: str, appr_set: List[int]) -> None:
 
 
 def get_ranking_without_weights(
-    line: str, appr_set: List[int], threshold: Optional[int]
+    line: str, appr_set: List[int], threshold: Optional[float]
 ) -> None:
     ranking = line.split(',')[1:]
     if threshold is None:
@@ -268,7 +268,7 @@ def remove_additional_voters(
             restricted_history.append(profile)
         else:
             appr_set = {}
-            cands = set()
+            cands: Set[Any] = set()
             for voter, appr in profile.approval_sets.items():
                 if voter in voters:
                     appr_set[voter] = appr

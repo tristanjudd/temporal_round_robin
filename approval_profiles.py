@@ -19,7 +19,7 @@
 import collections.abc
 import math
 import random
-from typing import Any, Dict, Iterable, Iterator, List, Mapping, Optional, Tuple, Union
+from typing import Any, Collection, Dict, Iterator, List, Mapping, Optional, Tuple, Union
 
 
 # approval profile
@@ -28,7 +28,7 @@ class ApprovalProfile(object):
         self,
         voters: List[Any],
         cands: List[Any],
-        approval_sets: Union[Mapping[Any, Iterable[Any]], List[Iterable[Any]]],
+        approval_sets: Union[Mapping[Any, Collection[Any]], List[Collection[Any]]],
     ) -> None:
         self.voters = voters
         if isinstance(approval_sets, collections.abc.Mapping):
@@ -96,11 +96,11 @@ def approvalprofile_from_2d_euclidean(
 # generate a list of 2d coordinates subject to
 # various distributions
 def generate_2d_points(
-    pointids: List[Any], mode: str, sigma: Optional[float]
+    pointids: List[Any], mode: str, sigma: float
 ) -> Dict[Any, Tuple[float, float]]:
 
     numpoints = len(pointids)
-    points = [0] * numpoints
+    points: List[Tuple[float, float]] = [(0.0, 0.0)] * numpoints
 
     # normal distribution, 1/3 of points centered on (-0.5,-0.5),
     #                      2/3 of points on (0.5,0.5)

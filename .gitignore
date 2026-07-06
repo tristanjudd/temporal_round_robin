@@ -45,3 +45,7 @@ Thumbs.db
 # perpetual/README.md) - not checked into version control.
 /data/
 data.zip
+
+# Generated experiment output (see run_experiment.py) - not checked
+# into version control.
+/experiments/
