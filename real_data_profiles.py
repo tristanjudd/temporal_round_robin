@@ -20,15 +20,21 @@
 #     Python 2/3 tuple-formatting of exception args).
 
 import os
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 from approval_profiles import ApprovalProfile
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-def load_real_data_profiles(dir_name, threshold=None,
-                            from_date=None, to_date=None,
-                            only_complete=False, with_weights=False):
+def load_real_data_profiles(
+    dir_name: str,
+    threshold: Optional[Union[int, float]] = None,
+    from_date: Optional[str] = None,
+    to_date: Optional[str] = None,
+    only_complete: bool = False,
+    with_weights: bool = False,
+) -> Tuple[List[ApprovalProfile], Set[Any]]:
     """Load all .tsoi/.ttoi files directly within the given directory
     into an ApprovalProfile history, one profile per round (file).
 
@@ -95,7 +101,9 @@ def load_real_data_profiles(dir_name, threshold=None,
     return profile_history, all_voters
 
 
-def load_file(abs_path, threshold, with_weights):
+def load_file(
+    abs_path: str, threshold: Optional[Union[int, float]], with_weights: bool
+) -> Tuple[List[int], Dict[str, List[int]]]:
     with open(abs_path, "r") as f:
         lines = f.readlines()
         candidate_count = int(lines[0])
@@ -125,7 +133,9 @@ def load_file(abs_path, threshold, with_weights):
         return list(used_candidates), profile
 
 
-def get_ranking_with_weights(line, appr_set, threshold):
+def get_ranking_with_weights(
+    line: str, appr_set: List[int], threshold: Optional[float]
+) -> None:
     if threshold is None:
         threshold = 0.9
     ranking = line.split(',')[1:]
@@ -165,7 +175,7 @@ def get_ranking_with_weights(line, appr_set, threshold):
                 continue
 
 
-def get_weight(rank):
+def get_weight(rank: str) -> float:
     parts = rank.split("[")
     if len(parts) != 2:
         raise Exception("Invalid format for with weights")
@@ -174,7 +184,7 @@ def get_weight(rank):
     return weight
 
 
-def add_candidate(rank, appr_set):
+def add_candidate(rank: str, appr_set: List[int]) -> None:
     parts = rank.split("[")
     if 0 < len(parts) < 3:
         candidate = parts[0].strip()
@@ -191,7 +201,9 @@ def add_candidate(rank, appr_set):
         raise Exception(f"Invalid format: {rank}")
 
 
-def get_ranking_without_weights(line, appr_set, threshold):
+def get_ranking_without_weights(
+    line: str, appr_set: List[int], threshold: Optional[int]
+) -> None:
     ranking = line.split(',')[1:]
     if threshold is None:
         threshold = max(len(ranking) // 2, 1)
@@ -225,7 +237,7 @@ def get_ranking_without_weights(line, appr_set, threshold):
             break
 
 
-def get_file_names(dir_name):
+def get_file_names(dir_name: str) -> Tuple[str, List[str]]:
     input_path = os.path.join(script_dir, dir_name)
     files = []
     file_dir = None
@@ -238,7 +250,9 @@ def get_file_names(dir_name):
     return file_dir, files
 
 
-def remove_additional_voters(profile_history, all_voters):
+def remove_additional_voters(
+    profile_history: List[ApprovalProfile], all_voters: Set[Any]
+) -> Tuple[List[ApprovalProfile], Set[Any]]:
     """Return a profile history where every round has exactly the same
     voters (the intersection of voters present in all rounds)."""
     voters = set(all_voters)

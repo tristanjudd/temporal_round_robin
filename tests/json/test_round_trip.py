@@ -1,7 +1,13 @@
+from pathlib import Path
+from typing import List
+
+from approval_profiles import ApprovalProfile
 from encoding import load_approval_profiles, save_approval_profiles
 
 
-def test_round_trip_preserves_profiles(tmp_path, sample_profiles):
+def test_round_trip_preserves_profiles(
+    tmp_path: Path, sample_profiles: List[ApprovalProfile]
+) -> None:
     path = tmp_path / "profiles.jsonl"
 
     save_approval_profiles(sample_profiles, str(path))

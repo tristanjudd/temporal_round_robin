@@ -3,10 +3,24 @@
 # Kept separate from serial_dictator.py / approval_profiles.py so that
 # those modules stay free of any printing/formatting dependencies.
 
+from typing import Any, Iterable, Protocol, Sequence
+
 import pandas as pd
 
 
-def print_serial_dictator_outcome(profiles, outcome, max_rows=10, max_cols=10):
+class ApprovalProfileLike(Protocol):
+    """Structural type for the profiles this module prints: anything
+    exposing `.voters` and `.approval_sets`."""
+    voters: Iterable[Any]
+    approval_sets: dict
+
+
+def print_serial_dictator_outcome(
+    profiles: Sequence[ApprovalProfileLike],
+    outcome: Sequence[Any],
+    max_rows: int = 10,
+    max_cols: int = 10,
+) -> None:
     """Pretty-print a serial dictator run to the terminal.
 
     Prints a voters-by-rounds table of approval sets, followed by the
@@ -47,7 +61,7 @@ def print_serial_dictator_outcome(profiles, outcome, max_rows=10, max_cols=10):
     print("outcome:", _format_sequence(outcome, max_cols))
 
 
-def _format_approvals(approvals):
+def _format_approvals(approvals: Iterable[Any]) -> str:
     try:
         approvals = sorted(approvals)
     except TypeError:
@@ -55,7 +69,7 @@ def _format_approvals(approvals):
     return "{" + ",".join(str(c) for c in approvals) + "}"
 
 
-def _format_sequence(seq, max_len):
+def _format_sequence(seq: Sequence[Any], max_len: int) -> str:
     if len(seq) <= max_len:
         shown = [str(x) for x in seq]
     else:

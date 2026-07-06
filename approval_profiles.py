@@ -19,11 +19,17 @@
 import collections.abc
 import math
 import random
+from typing import Any, Dict, Iterable, Iterator, List, Mapping, Optional, Tuple, Union
 
 
 # approval profile
 class ApprovalProfile(object):
-    def __init__(self, voters, cands, approval_sets):
+    def __init__(
+        self,
+        voters: List[Any],
+        cands: List[Any],
+        approval_sets: Union[Mapping[Any, Iterable[Any]], List[Iterable[Any]]],
+    ) -> None:
         self.voters = voters
         if isinstance(approval_sets, collections.abc.Mapping):
             self.approval_sets = approval_sets
@@ -44,12 +50,12 @@ class ApprovalProfile(object):
                     raise Exception(str(c) + " is not a valid candidate; "
                                     + "candidates are " + str(cands) + ".")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return ("Profile with %d votes and %d candidates: "
                 % (len(self.voters), len(self.cands))
                 + ', '.join(map(str, self.approval_sets.values())))
 
-    def __deepcopy__(self, memodict=None):
+    def __deepcopy__(self, memodict: Optional[dict] = None) -> "ApprovalProfile":
         if memodict is None:
             memodict = {}
         import copy
@@ -58,20 +64,25 @@ class ApprovalProfile(object):
         cands = list(self.cands)
         return ApprovalProfile(voters, cands, approvals_sets)
 
-    def has_empty_sets(self):
+    def has_empty_sets(self) -> bool:
         for appr in self.approval_sets.values():
             if len(appr) == 0:
                 return True
         return False
 
 
-def _euclidean(p1, p2):
+def _euclidean(p1: Tuple[float, float], p2: Tuple[float, float]) -> float:
     return math.dist(p1, p2)
 
 
 # create approval profile from 2d coordinates (Euclidean distance)
-def approvalprofile_from_2d_euclidean(voters, cands, voter_points,
-                                      cand_points, threshold):
+def approvalprofile_from_2d_euclidean(
+    voters: List[Any],
+    cands: List[Any],
+    voter_points: Dict[Any, Tuple[float, float]],
+    cand_points: Dict[Any, Tuple[float, float]],
+    threshold: float,
+) -> ApprovalProfile:
     approval_sets = {}
     for v in voters:
         distances = {c: _euclidean(voter_points[v], cand_points[c])
@@ -84,7 +95,9 @@ def approvalprofile_from_2d_euclidean(voters, cands, voter_points,
 
 # generate a list of 2d coordinates subject to
 # various distributions
-def generate_2d_points(pointids, mode, sigma):
+def generate_2d_points(
+    pointids: List[Any], mode: str, sigma: Optional[float]
+) -> Dict[Any, Tuple[float, float]]:
 
     numpoints = len(pointids)
     points = [0] * numpoints
@@ -93,7 +106,7 @@ def generate_2d_points(pointids, mode, sigma):
     #                      2/3 of points on (0.5,0.5)
     #                      all within [-1,1]x[-1,1]
     if mode == "eucl1":
-        def within_bounds(point):
+        def within_bounds(point: Tuple[float, float]) -> bool:
             return (point[0] <= 1 and point[0] >= -1 and
                     point[1] <= 1 and point[1] >= -1)
         for i in range(int(numpoints // 3)):
@@ -200,10 +213,15 @@ def generate_2d_points(pointids, mode, sigma):
 # candidates are (re-)placed anew every round (candpointmode/sigma),
 # and each round's ApprovalProfile is derived from the euclidean
 # distances between voters and candidates using approval_threshold.
-def generate_approval_profiles(T, num_voters=20, num_cands=5, sigma=0.2,
-                               voterpointmode="eucl5",
-                               candpointmode="uniform_square",
-                               approval_threshold=1.5):
+def generate_approval_profiles(
+    T: int,
+    num_voters: int = 20,
+    num_cands: int = 5,
+    sigma: float = 0.2,
+    voterpointmode: str = "eucl5",
+    candpointmode: str = "uniform_square",
+    approval_threshold: float = 1.5,
+) -> Iterator[ApprovalProfile]:
     """Generate T rounds of synthetic approval profiles.
 
     Parameters

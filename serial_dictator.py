@@ -6,6 +6,15 @@
 # style as the per-round rules in perpetual/perpetual_rules.py.
 
 import random
+from typing import Any, Iterable, List, Protocol
+
+
+class ApprovalProfileLike(Protocol):
+    """Structural type for the round profile SerialDictator needs:
+    anything exposing `.approval_sets` (this rule never looks at
+    `.cands`), regardless of which ApprovalProfile implementation
+    produced it."""
+    approval_sets: dict
 
 
 class SerialDictator:
@@ -19,25 +28,25 @@ class SerialDictator:
     so callers don't need to track or thread any state themselves.
     """
 
-    def __init__(self, permutation):
+    def __init__(self, permutation: Iterable[Any]) -> None:
         self.permutation = permutation
 
     @property
-    def permutation(self):
+    def permutation(self) -> List[Any]:
         """The fixed voter permutation, in order."""
         return self._permutation
 
     @permutation.setter
-    def permutation(self, value):
+    def permutation(self, value: Iterable[Any]) -> None:
         self._permutation = list(value)
         self._counter = 0
 
     @property
-    def next_voter(self):
+    def next_voter(self) -> Any:
         """The voter who will be dictator on the next call."""
         return self._permutation[self._counter % len(self._permutation)]
 
-    def __call__(self, profile):
+    def __call__(self, profile: ApprovalProfileLike) -> Any:
         """Select this round's winner and advance to the next voter.
 
         The winner is chosen uniformly at random from the current

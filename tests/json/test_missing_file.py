@@ -1,9 +1,13 @@
+from pathlib import Path
+
 import pytest
 
 from encoding import load_approval_profiles
 
 
-def test_load_missing_file_raises_file_not_found(tmp_path, capsys):
+def test_load_missing_file_raises_file_not_found(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
     missing_path = tmp_path / "does_not_exist.jsonl"
 
     with pytest.raises(FileNotFoundError):

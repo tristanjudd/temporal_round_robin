@@ -9,11 +9,12 @@
 # parsed by any language without depending on this codebase.
 
 import json
+from typing import Any, Iterable, List
 
 from approval_profiles import ApprovalProfile
 
 
-def save_approval_profiles(profiles, path):
+def save_approval_profiles(profiles: Iterable[ApprovalProfile], path: str) -> None:
     """Save a sequence of ApprovalProfile objects to a JSONL file.
 
     Each round is written as one independent JSON object on its own
@@ -65,7 +66,7 @@ def save_approval_profiles(profiles, path):
     print(f"Saved {num_rounds} rounds to '{path}'.")
 
 
-def load_approval_profiles(path):
+def load_approval_profiles(path: str) -> List[ApprovalProfile]:
     """Load a sequence of ApprovalProfile objects from a JSONL file
     written by save_approval_profiles.
 
@@ -154,7 +155,7 @@ def load_approval_profiles(path):
     return profiles
 
 
-def save_decision_sequence(outcome, path):
+def save_decision_sequence(outcome: Iterable[Any], path: str) -> None:
     """Save a decision (outcome) sequence to a JSONL file.
 
     Each round is written as one independent JSON object on its own
@@ -196,7 +197,7 @@ def save_decision_sequence(outcome, path):
     print(f"Saved {num_rounds} rounds to '{path}'.")
 
 
-def load_decision_sequence(path):
+def load_decision_sequence(path: str) -> List[Any]:
     """Load a decision (outcome) sequence from a JSONL file written by
     save_decision_sequence.
 
