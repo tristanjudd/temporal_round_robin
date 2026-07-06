@@ -10,6 +10,7 @@ from datetime import datetime
 from typing import List, Tuple
 
 from approval_profiles import ApprovalProfile, generate_approval_profiles
+from display import print_serial_dictator_outcome
 from encoding import save_approval_profiles, save_decision_sequence
 from serial_dictator import SerialDictator
 
@@ -18,7 +19,11 @@ EXPERIMENTS_DIR = os.path.join(
 
 
 def run_experiment(
-    T: int, n: int, m: int, output_dir: str = EXPERIMENTS_DIR
+    T: int,
+    n: int,
+    m: int,
+    output_dir: str = EXPERIMENTS_DIR,
+    verbose: bool = False,
 ) -> Tuple[str, str]:
     """Generate a synthetic election and run the serial dictator rule
     over it, saving the results as JSONL.
@@ -40,6 +45,10 @@ def run_experiment(
     output_dir : str
         Directory to save the two JSONL files in. Defaults to an
         experiments/ directory next to this module.
+    verbose : bool
+        If True, print the approval-profile table and outcome
+        sequence to the terminal via
+        display.print_serial_dictator_outcome.
 
     Returns
     -------
@@ -54,6 +63,11 @@ def run_experiment(
 
     dictator = SerialDictator(range(n))
     outcome = [dictator(profile) for profile in profiles]
+
+    if verbose:
+        print_serial_dictator_outcome(
+            profiles, outcome, permutation=dictator.permutation)
+        print()
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     run_name = f"T{T}_n{n}_m{m}_{timestamp}"
@@ -74,12 +88,16 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("T", type=int, help="number of rounds")
     parser.add_argument("n", type=int, help="number of voters")
     parser.add_argument("m", type=int, help="number of candidates")
+    parser.add_argument(
+        "-v", "--verbose", action="store_true",
+        help="print the approval profiles and outcome to the terminal")
     return parser.parse_args()
 
 
 def main() -> None:
     args = _parse_args()
-    profiles_path, outcome_path = run_experiment(args.T, args.n, args.m)
+    profiles_path, outcome_path = run_experiment(
+        args.T, args.n, args.m, verbose=args.verbose)
     print(f"Approval profiles saved to '{profiles_path}'.")
     print(f"Decision sequence saved to '{outcome_path}'.")
 

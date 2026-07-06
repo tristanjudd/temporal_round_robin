@@ -6,7 +6,7 @@
 # style as the per-round rules in perpetual/perpetual_rules.py.
 
 import random
-from typing import Any, Iterable, List, Protocol
+from typing import Any, Collection, Iterable, List, Mapping, Protocol
 
 
 class ApprovalProfileLike(Protocol):
@@ -14,7 +14,7 @@ class ApprovalProfileLike(Protocol):
     anything exposing `.approval_sets` (this rule never looks at
     `.cands`), regardless of which ApprovalProfile implementation
     produced it."""
-    approval_sets: dict
+    approval_sets: Mapping[Any, Collection[Any]]
 
 
 class SerialDictator:
